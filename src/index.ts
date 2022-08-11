@@ -57,7 +57,7 @@ export default class Cmd {
         try {
             this.childProcess = spawn(this.cmd, this.args, this.spawnOptions)
         } catch (e) {
-            this.stderr.getNewData(e as Error | string)
+            this.stderr.getNewData(e as Error | string, this.consoleLog)
         }
         let timeoutObj = null as NodeJS.Timeout | null
         if (!this.childProcess) {
@@ -65,14 +65,14 @@ export default class Cmd {
             return this.childProcess
         }
 
-        this.childProcess.on('error', (error) => { this.stderr.getNewData( error ) })
+        this.childProcess.on('error', (error) => { this.stderr.getNewData( error, this.consoleLog  ) })
 
         if (this.childProcess.stderr) this.childProcess.stderr.on('data', (data) => {
-            this.stderr.getNewData( data )
+            this.stderr.getNewData( data, this.consoleLog )
         })
 
         if (this.childProcess.stdout) this.childProcess.stdout.on('data', (data) => {
-            this.stdout.getNewData( data )
+            this.stdout.getNewData( data, this.consoleLog )
         })
 
         this.childProcess.on('close', (code) => {
@@ -86,7 +86,7 @@ export default class Cmd {
 
         if (this.timeout) {
             timeoutObj = setTimeout( () => {
-                this.stderr.getNewData( 'TIMEOUT' )
+                this.stderr.getNewData( 'TIMEOUT', this.consoleLog )
                 this.kill()
             }, this.timeout * 1000)
         }
@@ -130,8 +130,9 @@ export default class Cmd {
         return this.cmd + trailer
     }
 
-    static run(cmd:string, inputOptions?:PartialDeep<CmdOptions>) {
+    static run(cmd:string, inputOptions?:PartialDeep<CmdOptions>, consoleLog?:ConsoleLog) {
         const command = new Cmd(cmd, inputOptions)
+        if (consoleLog) command.consoleLog = consoleLog
         return command.run()
     }
 }

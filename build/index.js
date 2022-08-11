@@ -44,21 +44,21 @@ var Cmd = /** @class */ (function () {
             this.childProcess = (0, child_process_1.spawn)(this.cmd, this.args, this.spawnOptions);
         }
         catch (e) {
-            this.stderr.getNewData(e);
+            this.stderr.getNewData(e, this.consoleLog);
         }
         var timeoutObj = null;
         if (!this.childProcess) {
             this.childProcess = null;
             return this.childProcess;
         }
-        this.childProcess.on('error', function (error) { _this.stderr.getNewData(error); });
+        this.childProcess.on('error', function (error) { _this.stderr.getNewData(error, _this.consoleLog); });
         if (this.childProcess.stderr)
             this.childProcess.stderr.on('data', function (data) {
-                _this.stderr.getNewData(data);
+                _this.stderr.getNewData(data, _this.consoleLog);
             });
         if (this.childProcess.stdout)
             this.childProcess.stdout.on('data', function (data) {
-                _this.stdout.getNewData(data);
+                _this.stdout.getNewData(data, _this.consoleLog);
             });
         this.childProcess.on('close', function (code) {
             if (timeoutObj) {
@@ -70,7 +70,7 @@ var Cmd = /** @class */ (function () {
         });
         if (this.timeout) {
             timeoutObj = setTimeout(function () {
-                _this.stderr.getNewData('TIMEOUT');
+                _this.stderr.getNewData('TIMEOUT', _this.consoleLog);
                 _this.kill();
             }, this.timeout * 1000);
         }
@@ -113,8 +113,10 @@ var Cmd = /** @class */ (function () {
             trailer = ' ' + trailer;
         return this.cmd + trailer;
     };
-    Cmd.run = function (cmd, inputOptions) {
+    Cmd.run = function (cmd, inputOptions, consoleLog) {
         var command = new Cmd(cmd, inputOptions);
+        if (consoleLog)
+            command.consoleLog = consoleLog;
         return command.run();
     };
     return Cmd;

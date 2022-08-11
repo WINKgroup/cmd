@@ -5,7 +5,6 @@ export declare class CmdStreamManager extends EventEmitter {
     name: 'stdout' | 'stderr';
     collectDataAsString: boolean;
     data: string;
-    consoleLog: ConsoleLog;
     constructor(name: 'stdout' | 'stderr');
-    getNewData(inputNewData: Error | string): void;
+    getNewData(inputNewData: Error | string, consoleLog: ConsoleLog): void;
 }

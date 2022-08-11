@@ -14,32 +14,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CmdStreamManager = void 0;
-var console_log_1 = __importStar(require("@winkgroup/console-log"));
+var console_log_1 = require("@winkgroup/console-log");
 var node_events_1 = require("node:events");
 var CmdStreamManager = /** @class */ (function (_super) {
     __extends(CmdStreamManager, _super);
@@ -48,16 +25,15 @@ var CmdStreamManager = /** @class */ (function (_super) {
         _this.collectDataAsString = false;
         _this.data = '';
         _this.name = name;
-        _this.consoleLog = new console_log_1.default();
         return _this;
     }
-    CmdStreamManager.prototype.getNewData = function (inputNewData) {
+    CmdStreamManager.prototype.getNewData = function (inputNewData, consoleLog) {
         var newData = typeof inputNewData === 'string' ? inputNewData : inputNewData.toString();
         if (this.collectDataAsString)
             this.data += newData;
         this.emit('data', inputNewData);
         var level = (this.name == 'stderr' ? console_log_1.LogLevel.ERROR : console_log_1.LogLevel.INFO);
-        this.consoleLog.print(newData, level);
+        consoleLog.print(newData, level);
     };
     return CmdStreamManager;
 }(node_events_1.EventEmitter));

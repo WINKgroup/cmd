@@ -24,5 +24,5 @@ export default class Cmd {
     kill(): void;
     run(): Promise<string>;
     cmdStr(): string;
-    static run(cmd: string, inputOptions?: PartialDeep<CmdOptions>): Promise<string>;
+    static run(cmd: string, inputOptions?: PartialDeep<CmdOptions>, consoleLog?: ConsoleLog): Promise<string>;
 }
