@@ -1,7 +1,7 @@
 import type { PartialDeep } from 'type-fest'
 import { ChildProcessWithoutNullStreams, spawn } from "child_process"
 import _ from "lodash"
-import ConsoleLog from '@winkgroup/console-log'
+import ConsoleLog, { LogLevel } from '@winkgroup/console-log'
 import { CmdStreamManager } from './streamManager'
 
 export interface CmdOptions {
@@ -46,7 +46,7 @@ export default class Cmd {
     start() {
         const commandStr = this.cmdStr()
         if (this.childProcess) {
-            this.consoleLog.warn(`${commandStr} already started`)
+            this.consoleLog.warn(`${commandStr} already started: not starting again`)
             return
         }
         this.consoleLog.print(commandStr)
@@ -82,6 +82,7 @@ export default class Cmd {
             }
             this.childProcess = null
             this.exitCode = code
+            if ( code !== 0 ) this.consoleLog.error(`exit with code ${this.exitCode}`)
         })
 
         if (this.timeout) {
@@ -101,26 +102,16 @@ export default class Cmd {
             this.childProcess.stderr.destroy()
             this.childProcess.kill()
         }
-            else console.error('unable to kill Cmd:no child process')
+            else console.error('unable to kill Cmd: no child process')
     }
 
     run() {
-        return new Promise<string>( (resolve, reject) => {
+        return new Promise<Cmd>( (resolve) => {
             this.start()
             
-            if (this.childProcess) {
-                this.childProcess.on('close', (code) => {
-                    if (code !== 0) {
-                        this.consoleLog.error(`${this.cmd} exit with code ${this.exitCode}`)
-                        const result = this.stderr.collectDataAsString ? this.stderr.data : this.stdout.data
-                        reject(this.stderr)
-                    } else {
-                        const result = this.stdout.collectDataAsString ? this.stdout.data : this.stderr.data
-                        resolve(result)
-                    }
-                })
-            }
-                else reject(this.stderr.data)
+            if (this.childProcess)
+                this.childProcess.on('close', () => { resolve(this) })
+                else resolve(this)
         })
     }
 
@@ -134,5 +125,12 @@ export default class Cmd {
         const command = new Cmd(cmd, inputOptions)
         if (consoleLog) command.consoleLog = consoleLog
         return command.run()
+    }
+
+    static async exists(cmd:string) {
+        const command = await this.run('command', {
+            args: ['-v', cmd]
+        }, new ConsoleLog({verbosity: LogLevel.NONE}))
+        return (command.exitCode === 0)
     }
 }

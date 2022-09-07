@@ -22,7 +22,8 @@ export default class Cmd {
     constructor(cmd: string, inputOptions?: PartialDeep<CmdOptions>);
     start(): ChildProcessWithoutNullStreams | null | undefined;
     kill(): void;
-    run(): Promise<string>;
+    run(): Promise<Cmd>;
     cmdStr(): string;
-    static run(cmd: string, inputOptions?: PartialDeep<CmdOptions>, consoleLog?: ConsoleLog): Promise<string>;
+    static run(cmd: string, inputOptions?: PartialDeep<CmdOptions>, consoleLog?: ConsoleLog): Promise<Cmd>;
+    static exists(cmd: string): Promise<boolean>;
 }
