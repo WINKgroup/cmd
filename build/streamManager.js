@@ -15,26 +15,39 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CmdStreamManager = void 0;
+exports.CmdStreamManager = exports.CmdStreamManagerNoConsoleLog = void 0;
 var console_log_1 = require("@winkgroup/console-log");
 var node_events_1 = require("node:events");
-var CmdStreamManager = /** @class */ (function (_super) {
-    __extends(CmdStreamManager, _super);
-    function CmdStreamManager(name) {
+var CmdStreamManagerNoConsoleLog = /** @class */ (function (_super) {
+    __extends(CmdStreamManagerNoConsoleLog, _super);
+    function CmdStreamManagerNoConsoleLog(name) {
         var _this = _super.call(this) || this;
         _this.collectDataAsString = false;
         _this.data = '';
         _this.name = name;
         return _this;
     }
-    CmdStreamManager.prototype.getNewData = function (inputNewData, consoleLog) {
+    CmdStreamManagerNoConsoleLog.prototype.getNewData = function (inputNewData, consoleLog) {
         var newData = typeof inputNewData === 'string' ? inputNewData : inputNewData.toString();
         if (this.collectDataAsString)
             this.data += newData;
         this.emit('data', inputNewData);
+        return newData;
+    };
+    return CmdStreamManagerNoConsoleLog;
+}(node_events_1.EventEmitter));
+exports.CmdStreamManagerNoConsoleLog = CmdStreamManagerNoConsoleLog;
+var CmdStreamManager = /** @class */ (function (_super) {
+    __extends(CmdStreamManager, _super);
+    function CmdStreamManager() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    CmdStreamManager.prototype.getNewData = function (inputNewData, consoleLog) {
+        var newData = _super.prototype.getNewData.call(this, inputNewData, consoleLog);
         var level = (this.name == 'stderr' ? console_log_1.LogLevel.ERROR : console_log_1.LogLevel.INFO);
         consoleLog.print(newData, level);
+        return newData;
     };
     return CmdStreamManager;
-}(node_events_1.EventEmitter));
+}(CmdStreamManagerNoConsoleLog));
 exports.CmdStreamManager = CmdStreamManager;
