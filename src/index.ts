@@ -9,6 +9,8 @@ export interface CmdOptions {
     timeout: number
     args: string[]
     spawnOptions?:any
+    stdoutLogLevel:LogLevel
+    stderrLogLevel:LogLevel
 }
 
 export default class Cmd {
@@ -26,15 +28,17 @@ export default class Cmd {
         const options:CmdOptions = _.defaults(inputOptions, {
             getResult: true,
             timeout: 20,
-            args: [] as string[]
+            args: [] as string[],
+            stdoutLogLevel: LogLevel.INFO,
+            stderrLogLevel: LogLevel.ERROR
         })
 
         this.cmd = cmd
         this.timeout = options.timeout
         this.args = options.args
         this.consoleLog = new ConsoleLog({ prefix: 'Cmd' })
-        this.stdout = new CmdStreamManager('stdout')
-        this.stderr = new CmdStreamManager('stderr')
+        this.stdout = new CmdStreamManager('stdout', options.stdoutLogLevel)
+        this.stderr = new CmdStreamManager('stderr', options.stderrLogLevel)
         this.spawnOptions = options.spawnOptions
 
         if (options.getResult) {

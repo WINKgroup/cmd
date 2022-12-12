@@ -39,13 +39,16 @@ var CmdStreamManagerNoConsoleLog = /** @class */ (function (_super) {
 exports.CmdStreamManagerNoConsoleLog = CmdStreamManagerNoConsoleLog;
 var CmdStreamManager = /** @class */ (function (_super) {
     __extends(CmdStreamManager, _super);
-    function CmdStreamManager() {
-        return _super !== null && _super.apply(this, arguments) || this;
+    function CmdStreamManager(name, logLevel) {
+        var _this = _super.call(this, name) || this;
+        if (!logLevel)
+            logLevel = name === 'stdout' ? console_log_1.LogLevel.INFO : console_log_1.LogLevel.ERROR;
+        _this.logLevel = logLevel;
+        return _this;
     }
     CmdStreamManager.prototype.getNewData = function (inputNewData, consoleLog) {
         var newData = _super.prototype.getNewData.call(this, inputNewData, consoleLog);
-        var level = (this.name == 'stderr' ? console_log_1.LogLevel.ERROR : console_log_1.LogLevel.INFO);
-        consoleLog.print(newData, level);
+        consoleLog.print(newData, this.logLevel);
         return newData;
     };
     return CmdStreamManager;

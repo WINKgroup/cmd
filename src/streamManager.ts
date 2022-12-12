@@ -20,10 +20,17 @@ export class CmdStreamManagerNoConsoleLog extends EventEmitter  {
 }
 
 export class CmdStreamManager extends CmdStreamManagerNoConsoleLog {
+    logLevel:LogLevel
+
+    constructor(name: 'stdout' | 'stderr', logLevel?:LogLevel) {
+        super(name)
+        if (!logLevel) logLevel = name === 'stdout' ? LogLevel.INFO : LogLevel.ERROR
+        this.logLevel = logLevel
+    }
+
     getNewData(inputNewData:Error | string, consoleLog:ConsoleLog) {
         const newData = super.getNewData(inputNewData, consoleLog)
-        const level = (this.name == 'stderr' ? LogLevel.ERROR : LogLevel.INFO)
-        consoleLog.print(newData, level)
+        consoleLog.print(newData, this.logLevel)
         return newData
     }
 }

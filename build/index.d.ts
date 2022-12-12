@@ -1,13 +1,15 @@
 /// <reference types="node" />
 import type { PartialDeep } from 'type-fest';
 import { ChildProcessWithoutNullStreams } from "child_process";
-import ConsoleLog from '@winkgroup/console-log';
+import ConsoleLog, { LogLevel } from '@winkgroup/console-log';
 import { CmdStreamManager } from './streamManager';
 export interface CmdOptions {
     getResult: boolean;
     timeout: number;
     args: string[];
     spawnOptions?: any;
+    stdoutLogLevel: LogLevel;
+    stderrLogLevel: LogLevel;
 }
 export default class Cmd {
     timeout: number;

@@ -37,7 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -74,14 +74,16 @@ var Cmd = /** @class */ (function () {
         var options = lodash_1.default.defaults(inputOptions, {
             getResult: true,
             timeout: 20,
-            args: []
+            args: [],
+            stdoutLogLevel: console_log_1.LogLevel.INFO,
+            stderrLogLevel: console_log_1.LogLevel.ERROR
         });
         this.cmd = cmd;
         this.timeout = options.timeout;
         this.args = options.args;
         this.consoleLog = new console_log_1.default({ prefix: 'Cmd' });
-        this.stdout = new streamManager_1.CmdStreamManager('stdout');
-        this.stderr = new streamManager_1.CmdStreamManager('stderr');
+        this.stdout = new streamManager_1.CmdStreamManager('stdout', options.stdoutLogLevel);
+        this.stderr = new streamManager_1.CmdStreamManager('stderr', options.stderrLogLevel);
         this.spawnOptions = options.spawnOptions;
         if (options.getResult) {
             this.stdout.collectDataAsString = true;
