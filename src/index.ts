@@ -9,8 +9,8 @@ export interface CmdOptions {
     timeout: number
     args: string[]
     spawnOptions?:any
-    stdoutLogLevel:LogLevel
-    stderrLogLevel:LogLevel
+    stdoutLogLevel?:LogLevel
+    stderrLogLevel?:LogLevel
 }
 
 export default class Cmd {
