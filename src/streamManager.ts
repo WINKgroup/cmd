@@ -1,36 +1,41 @@
-import ConsoleLog, { LogLevel } from '@winkgroup/console-log'
+import ConsoleLog, { ConsoleLogGeneralOptions, LogLevel } from '@winkgroup/console-log'
+import { ConsoleLogLevelOptions } from '@winkgroup/console-log/build/level'
+import _ from 'lodash'
 import { EventEmitter } from 'node:events'
+import { PartialDeep } from 'type-fest'
 
-export class CmdStreamManagerNoConsoleLog extends EventEmitter  {
+export interface CmdStreamManagerOptions {
+    collectDataAsString: boolean
+    logLevel: LogLevel
+    consoleLogLevelOptions?: {[key: string]: PartialDeep<ConsoleLogLevelOptions>}
+}
+
+export class CmdStreamManager extends EventEmitter  {
     name: 'stdout' | 'stderr'
-    collectDataAsString = false
+    collectDataAsString: boolean
+    logLevel: LogLevel
+    consoleLog: ConsoleLog
     data = ''
 
-    constructor(name: 'stdout' | 'stderr') {
+    constructor(name: 'stdout' | 'stderr', consoleLogGeneralOptions: ConsoleLogGeneralOptions, inputOptions?:Partial<CmdStreamManagerOptions>) {
         super()
         this.name = name
+        const options = _.defaults(inputOptions, {
+            collectDataAsString: true,
+            logLevel: name === 'stdout' ? LogLevel.INFO : LogLevel.ERROR,
+        })
+
+        this.collectDataAsString = options.collectDataAsString
+        this.logLevel = options.logLevel
+        this.consoleLog = new ConsoleLog(consoleLogGeneralOptions, options.consoleLogLevelOptions)
+        if (!this.consoleLog.generalOptions.id) this.consoleLog.generalOptions.id = name
     }
 
-    getNewData(inputNewData:Error | string, consoleLog:ConsoleLog) {
+    getNewData(inputNewData:Error | string) {
         const newData = typeof inputNewData === 'string' ? inputNewData : inputNewData.toString()
         if (this.collectDataAsString) this.data += newData
         this.emit('data', inputNewData)
-        return newData
-    }
-}
-
-export class CmdStreamManager extends CmdStreamManagerNoConsoleLog {
-    logLevel:LogLevel
-
-    constructor(name: 'stdout' | 'stderr', logLevel?:LogLevel) {
-        super(name)
-        if (!logLevel) logLevel = name === 'stdout' ? LogLevel.INFO : LogLevel.ERROR
-        this.logLevel = logLevel
-    }
-
-    getNewData(inputNewData:Error | string, consoleLog:ConsoleLog) {
-        const newData = super.getNewData(inputNewData, consoleLog)
-        consoleLog.print(newData, this.logLevel)
+        this.consoleLog.print(newData, this.logLevel)
         return newData
     }
 }

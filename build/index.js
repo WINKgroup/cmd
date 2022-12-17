@@ -75,20 +75,17 @@ var Cmd = /** @class */ (function () {
             getResult: true,
             timeout: 20,
             args: [],
-            stdoutLogLevel: console_log_1.LogLevel.INFO,
-            stderrLogLevel: console_log_1.LogLevel.ERROR
+            consoleLogGeneralOptions: { prefix: 'Cmd' }
         });
         this.cmd = cmd;
         this.timeout = options.timeout;
         this.args = options.args;
-        this.consoleLog = new console_log_1.default({ prefix: 'Cmd' });
-        this.stdout = new streamManager_1.CmdStreamManager('stdout', options.stdoutLogLevel);
-        this.stderr = new streamManager_1.CmdStreamManager('stderr', options.stderrLogLevel);
+        this.stdout = new streamManager_1.CmdStreamManager('stdout', options.consoleLogGeneralOptions, options.stdoutOptions);
+        this.stderr = new streamManager_1.CmdStreamManager('stderr', options.consoleLogGeneralOptions, options.stderrOptions);
         this.spawnOptions = options.spawnOptions;
-        if (options.getResult) {
-            this.stdout.collectDataAsString = true;
-            this.stderr.collectDataAsString = true;
-        }
+        this.consoleLog = new console_log_1.default(options.consoleLogGeneralOptions);
+        this.stdout.collectDataAsString = options.getResult;
+        this.stderr.collectDataAsString = options.getResult;
     }
     Cmd.prototype.start = function () {
         var _this = this;
@@ -105,21 +102,21 @@ var Cmd = /** @class */ (function () {
             this.childProcess = (0, child_process_1.spawn)(this.cmd, this.args, this.spawnOptions);
         }
         catch (e) {
-            this.stderr.getNewData(e, this.consoleLog);
+            this.stderr.getNewData(e);
         }
         var timeoutObj = null;
         if (!this.childProcess) {
             this.childProcess = null;
             return this.childProcess;
         }
-        this.childProcess.on('error', function (error) { _this.stderr.getNewData(error, _this.consoleLog); });
+        this.childProcess.on('error', function (error) { _this.stderr.getNewData(error); });
         if (this.childProcess.stderr)
             this.childProcess.stderr.on('data', function (data) {
-                _this.stderr.getNewData(data, _this.consoleLog);
+                _this.stderr.getNewData(data);
             });
         if (this.childProcess.stdout)
             this.childProcess.stdout.on('data', function (data) {
-                _this.stdout.getNewData(data, _this.consoleLog);
+                _this.stdout.getNewData(data);
             });
         this.childProcess.on('close', function (code) {
             if (timeoutObj) {
@@ -133,7 +130,7 @@ var Cmd = /** @class */ (function () {
         });
         if (this.timeout) {
             timeoutObj = setTimeout(function () {
-                _this.stderr.getNewData('TIMEOUT', _this.consoleLog);
+                _this.stderr.getNewData('TIMEOUT');
                 _this.kill();
             }, this.timeout * 1000);
         }
@@ -165,20 +162,21 @@ var Cmd = /** @class */ (function () {
             trailer = ' ' + trailer;
         return this.cmd + trailer;
     };
-    Cmd.run = function (cmd, inputOptions, consoleLog) {
+    Cmd.run = function (cmd, inputOptions) {
         var command = new Cmd(cmd, inputOptions);
-        if (consoleLog)
-            command.consoleLog = consoleLog;
         return command.run();
     };
     Cmd.exists = function (cmd) {
         return __awaiter(this, void 0, void 0, function () {
-            var command;
+            var options, command;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.run('command', {
+                    case 0:
+                        options = {
+                            consoleLogGeneralOptions: { verbosity: console_log_1.LogLevel.NONE },
                             args: ['-v', cmd]
-                        }, new console_log_1.default({ verbosity: console_log_1.LogLevel.NONE }))];
+                        };
+                        return [4 /*yield*/, this.run('command', options)];
                     case 1:
                         command = _a.sent();
                         return [2 /*return*/, (command.exitCode === 0)];
