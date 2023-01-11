@@ -1,5 +1,4 @@
-import ConsoleLog, { ConsoleLogGeneralOptions, LogLevel } from '@winkgroup/console-log'
-import { ConsoleLogLevelOptions } from '@winkgroup/console-log/build/level'
+import ConsoleLog, { ConsoleLogLevelOptions, ConsoleLogGeneralOptions, LogLevel } from '@winkgroup/console-log'
 import _ from 'lodash'
 import { EventEmitter } from 'node:events'
 import { PartialDeep } from 'type-fest'

@@ -1,9 +1,8 @@
-import type { PartialDeep } from 'type-fest'
+import ConsoleLog, { ConsoleLogGeneralOptions, ConsoleLogLevelOptions, LogLevel } from '@winkgroup/console-log'
 import { ChildProcessWithoutNullStreams, spawn } from "child_process"
 import _ from "lodash"
-import ConsoleLog, { ConsoleLogGeneralOptions, LogLevel } from '@winkgroup/console-log'
+import type { PartialDeep } from 'type-fest'
 import { CmdStreamManager, CmdStreamManagerOptions } from './streamManager'
-import { ConsoleLogLevelOptions } from '@winkgroup/console-log/build/level'
 
 export interface CmdOptions {
     getResult: boolean // shortcut option to setup stdout & stderr options
