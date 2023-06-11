@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "clean": "rm -rf dist",
-    "playground": "ts-node-dev tests/test.ts",
+    "playground": "ts-node-dev src/test.ts",
     "build": "npm run clean && tsc",
     "format": "prettier --write 'src/**/*.ts'",
     "prepare": "npm run build",
@@ -32,12 +32,12 @@
   },
   "homepage": "https://github.com/WINKgroup/cmd#readme",
   "dependencies": {
-    "@winkgroup/console-log": "^2.0.1",
+    "@winkgroup/console-log": "^2.0.4",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.195",
-    "@types/node": "^20.2.5",
+    "@types/node": "^20.3.0",
     "prettier": "^2.8.8",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
