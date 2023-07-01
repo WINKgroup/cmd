@@ -1,6 +1,6 @@
 {
   "name": "@winkgroup/cmd",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Helper class for terminal commands",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
