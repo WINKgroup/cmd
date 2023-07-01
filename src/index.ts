@@ -1,4 +1,4 @@
-import ConsoleLog, { LogLevel } from '@winkgroup/console-log';
+import ConsoleLog, { ConsoleLogLevel } from '@winkgroup/console-log';
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import _ from 'lodash';
 import { CmdStreamManager, CmdStreamManagerOptions } from './streamManager';
@@ -140,7 +140,7 @@ export default class Cmd {
 
     static async exists(cmd: string) {
         const options: Partial<CmdOptions> = {
-            consoleLog: new ConsoleLog({ verbosity: LogLevel.NONE }),
+            consoleLog: new ConsoleLog({ verbosity: ConsoleLogLevel.NONE }),
             args: ['-v', cmd],
         };
 

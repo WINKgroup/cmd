@@ -1,16 +1,16 @@
-import ConsoleLog, { LogLevel } from '@winkgroup/console-log';
+import ConsoleLog, { ConsoleLogLevel } from '@winkgroup/console-log';
 import _ from 'lodash';
 import { EventEmitter } from 'node:events';
 
 export interface CmdStreamManagerOptions {
     collectDataAsString: boolean;
-    logLevel: LogLevel;
+    logLevel: ConsoleLogLevel;
 }
 
 export class CmdStreamManager extends EventEmitter {
     name: 'stdout' | 'stderr';
     collectDataAsString: boolean;
-    logLevel: LogLevel;
+    logLevel: ConsoleLogLevel;
     data = '';
 
     constructor(
@@ -21,7 +21,7 @@ export class CmdStreamManager extends EventEmitter {
         this.name = name;
         const options = _.defaults(inputOptions, {
             collectDataAsString: true,
-            logLevel: name === 'stdout' ? LogLevel.INFO : LogLevel.ERROR,
+            logLevel: name === 'stdout' ? ConsoleLogLevel.INFO : ConsoleLogLevel.ERROR,
         });
 
         this.collectDataAsString = options.collectDataAsString;

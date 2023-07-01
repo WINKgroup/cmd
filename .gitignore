@@ -1,3 +1,4 @@
 src/test.ts
-dist/**/*
+dist
 yarn.lock
+node_modules
