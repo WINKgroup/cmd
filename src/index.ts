@@ -142,6 +142,9 @@ export default class Cmd {
         const options: Partial<CmdOptions> = {
             consoleLog: new ConsoleLog({ verbosity: ConsoleLogLevel.NONE }),
             args: ['-v', cmd],
+            spawnOptions: {
+                shell: true  // required to proper make work "command" when is launched inside a container
+            }
         };
 
         const command = await this.run('command', options);
